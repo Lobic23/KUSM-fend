@@ -1,8 +1,9 @@
 
+import { api } from "@/utils/api";
+import type { User } from "@/utils/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { api } from "./utils/api";
-import type { User } from "./utils/types";
+
 
 interface AuthState {
   user: User | null;
