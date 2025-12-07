@@ -1,11 +1,13 @@
 import { useAuthStore } from "@/stores/authStore";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const apiUrl = import.meta.env.VITE_API_URL;
+
+if (!apiUrl) throw new Error("Missing VITE_API_URL in .env");
 
 // Create axios instance
 export const axiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: apiUrl,
   headers: {
     "Content-Type": "application/json",
   },
