@@ -2,16 +2,16 @@ import { useState, useEffect } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
-  Routes,
-  Route,
-  Navigate,
 } from "react-router-dom";
 
 import { useAuthStore } from "@stores/authStore";
 import { api } from "@utils/api";
 import Login from "@pages/Login";
-import Dashboard from "@pages/Dashboard-bak";
+import Dashboard from "@pages/Dashboard";
 import MasterLayout from "@components/layouts/MasterLayout";
+import Analysis from "@pages/Analysis";
+import MeterDetail from "@pages/MeterDetail";
+import Map from "@pages/Map";
 
 
 /*
@@ -25,9 +25,27 @@ const router = createBrowserRouter([
   },
   {
     element: <MasterLayout />,
-    handle: { title: "Dashboard" },
     children: [
-      { path: "/", element: <Dashboard /> }
+      { 
+        path: "/", 
+        element: <Dashboard />,
+        handle: { title: "Dashboard" }
+      },
+      { 
+        path: "/analysis", 
+        element: <Analysis />,
+        handle: { title: "Analysis" }
+      },
+      { 
+        path: "/map", 
+        element: <Map />,
+        handle: { title: "Map" }
+      },
+      { 
+        path: "/meter/:meterId", 
+        element: <MeterDetail />,
+        handle: { title: "Meter Details" }
+      },
     ],
   },
 ]);
