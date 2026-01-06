@@ -11,6 +11,7 @@ import MasterLayout from "@components/layouts/MasterLayout";
 import Analysis from "@pages/Analysis";
 import MeterDetail from "@pages/MeterDetail";
 import Map from "@pages/Map";
+import Billing from "@pages/Billing";
 import { useMeterStore } from "./stores/meterStore";
 
 
@@ -45,6 +46,11 @@ const router = createBrowserRouter([
         path: "/meter/:meterId", 
         element: <MeterDetail />,
         handle: { title: "Meter Details" }
+      },
+      {
+        path: "/billing",
+        element: <Billing />,
+        handle: { title: "Billing" }
       },
     ],
   },

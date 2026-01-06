@@ -5,7 +5,6 @@ import { useMeterStore } from "@stores/meterStore";
 import type { GetLatestMeterDataResponse, TimePoint } from "@utils/types";
 import { api } from "@utils/api";
 import { LineGraph, type LineGraphPoint } from "@components/LineGraph";
-import { MonthlyBarGraph } from "@components/MonthlyBarGraph";
 import { OverviewInfoCard } from "@components/OverviewInfoCard";
 
 export default function MeterDetail() {
@@ -67,7 +66,7 @@ export default function MeterDetail() {
     setMeterReadings([]);
     const fetchData = async () => {
       try {
-        const res = await api.getMeterDataByDate(meter.name, "2025-12-30", "2025-12-30");
+        const res = await api.getMeterDataByDate(meter.name, "2026-01-06", "2026-01-06");
 
         if (!res.success) {
           throw new Error(res.message);
@@ -122,12 +121,6 @@ export default function MeterDetail() {
           <LineGraph title="Current" points={currentData?.phaseData} />
         </div>
         <div className="row-span-2">
-          { loading ? (
-              "Loading..."
-            ) : (
-              <MonthlyBarGraph title="Monthly Power" data={data120} color="#10b981"/>
-            )
-          }
         </div>
         <div className="">
           <LineGraph title="Voltage" points={voltageData?.phaseData} />

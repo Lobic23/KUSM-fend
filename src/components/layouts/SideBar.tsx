@@ -15,6 +15,7 @@ export default function SideBar() {
   const mainMenuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/" },
     { name: "Analysis", icon: BarChart3, path: "/analysis" },
+    { name: "Billing", icon: BarChart3, path: "/billing" },
     { name: "Map", icon: Map, path: "/map" },
   ];
 

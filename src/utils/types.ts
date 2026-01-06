@@ -58,10 +58,45 @@ export interface GetAllMeterResponse  {
 export type GetLatestMeterDataResponse = MeterData;
 
 
+export type Billing = {
+  total_cost: number;
+  avg_cost_per_day: number;
+  expensive_day: number;
+  expensive_day_cost: number;
+};
+
+export type CostPerDay = {
+  day: number;
+  cost: number;
+};
+
+export type CostPerMeter = {
+  meter_id: number;
+  cost: number;
+};
+
+export type AvgCostPerWeekDay = {
+  Sunday: number;
+  Monday: number;
+  Tuesday: number;
+  Wednesday: number;
+  Thursday: number;
+  Friday: number;
+  Saturday: number;
+};
+
+export type BillingResponse = {
+  billing: Billing;
+  cost_per_day: CostPerDay[];
+  cost_per_meter: CostPerMeter[];
+  avg_cost_per_weekday: AvgCostPerWeekDay;
+};
+
+
 // ---------------common types ------------------
 
 export type TimePoint = {
-  x: Date;
+  x: Date | number | string;
   y: number;
 };
 

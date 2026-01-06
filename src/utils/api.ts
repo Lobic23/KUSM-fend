@@ -40,6 +40,11 @@ export const api = {
 
     return response.data;
   },
+
+  async getBillingData(year:number, month: number) {
+    const response = await axiosInstance.get(`/billing/${year}/${month}`);
+    return response.data;
+  }
 };
 
 export default axiosInstance;

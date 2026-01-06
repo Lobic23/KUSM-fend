@@ -23,6 +23,7 @@ export function LineGraph({ title, points }: LineGraphProps) {
     );
   }
 
+
   const safePoints = Array.isArray(points)
     ? points.filter(p => Array.isArray(p.data) && p.data.length > 0)
     : [];
@@ -40,8 +41,28 @@ export function LineGraph({ title, points }: LineGraphProps) {
   const maxY = Math.max(...allValues);
   const padding = (maxY - minY) * 0.1 || 1;
 
-  // Extract x-axis data (timestamps) from the first series
+  // X axis format
+  const firstX = safePoints[0]?.data[0]?.x;
+  const isTimeAxis = firstX instanceof Date;
   const xAxisData = safePoints[0]?.data.map(point => point.x) || [];
+
+  // Support for both timestamp and normal one
+  const xAxis = isTimeAxis
+    ? [
+        {
+          scaleType: "time" as const,
+          data: xAxisData as Date[],
+          valueFormatter: (d: Date) =>
+            d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]
+    : [
+        {
+          scaleType: "band" as const,
+          data: xAxisData as (number | string)[],
+          label: "Day",
+        },
+      ];
 
   // Convert series data to just y-values
   const series = safePoints.map((point) => ({
@@ -57,14 +78,7 @@ export function LineGraph({ title, points }: LineGraphProps) {
       <div className="px-6 py-4 flex-none">{title}</div>
       <LineChart
         series={series}
-        xAxis={[
-          {
-            scaleType: 'time',
-            data: xAxisData,
-            valueFormatter: (d: Date) =>
-              d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          },
-        ]}
+        xAxis={xAxis}
         yAxis={[
           {
             min: minY - padding,
