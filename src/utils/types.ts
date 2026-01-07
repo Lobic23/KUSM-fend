@@ -14,6 +14,8 @@ export interface Meter {
   meter_id: number;
   name: string;
   sn: string;
+  x?: number | null;  // Map X coordinate (percentage)
+  y?: number | null;  // Map Y coordinate (percentage)
 }
 
 export interface MeterData {
@@ -100,3 +102,23 @@ export type TimePoint = {
   y: number;
 };
 
+
+
+export interface GetAllMeterResponse {
+  success: boolean;
+  count: number;
+  data: Meter[];
+}
+
+export interface MeterLocationUpdate {
+  x: number;
+  y: number;
+}
+
+export interface BulkLocationUpdate {
+  locations: Array<{
+    meter_id: number;
+    x: number;
+    y: number;
+  }>;
+}

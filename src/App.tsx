@@ -13,6 +13,7 @@ import MeterDetail from "@pages/MeterDetail";
 import Map from "@pages/Map";
 import Billing from "@pages/Billing";
 import { useMeterStore } from "./stores/meterStore";
+import MapAdmin from "./pages/MapAdmin";
 
 
 /*
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
       { 
         path: "/map", 
         element: <Map />,
+        handle: { title: "Map" }
+      },
+            { 
+        path: "/map/admin", 
+        element: <MapAdmin />,
         handle: { title: "Map" }
       },
       { 

@@ -28,6 +28,15 @@ export const api = {
     const response = await axiosInstance.get(`/meter/${id}/latest`);
     return response.data;
   },
+  async updateMeterLocation(meterId: number, location: { x: number; y: number }) {
+    const response = await axiosInstance.put(`/meter/${meterId}/location`, location);
+    return response.data;
+  },
+
+  async updateMeterLocations(locations: Array<{ meter_id: number; x: number; y: number }>) {
+    const response = await axiosInstance.put(`/meter/locations`, { locations });
+    return response.data;
+  },
 
   async getMeterDataByDate(name: string, fromDate: string, toDate: string) {
     const response = await axiosInstance.get(`/meter/databydate`, {
