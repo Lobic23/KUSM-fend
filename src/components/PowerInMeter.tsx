@@ -1,8 +1,9 @@
 
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { api } from "@utils/api";
 import type { Meter } from "@/utils/types";
+import { useLiveDataStore } from "@/stores/liveDataStore";
+import { continuousColorLegendClasses } from "@mui/x-charts";
 
 export type PowerInMeterProps = {
     meters: Meter[]
@@ -13,16 +14,18 @@ export function PowerInMeter({meters}: PowerInMeterProps) {
     { meter_id: number; power: number | string }[]
   >([]);
   const [refreshCount, setRefreshCount] = useState<number>(0);
+  const {fetchSingleMeterData} = useLiveDataStore()
   useEffect(() => {
     const fetchData = async () => {
       console.log()
       try {
         meters.forEach(async (meter) => {
-          const res = await api.getMeterData(meter.meter_id);
-          const power =
-            res.phase_A_active_power +
-            res.phase_B_active_power +
-            res.phase_C_active_power;
+          const res = await fetchSingleMeterData(meter.meter_id);
+          console.log(res)
+    /*   const power =
+        res.phase_A_active_power +
+          res.phase_B_active_power +
+         res.phase_C_active_power;
           console.log(res);
           console.log(meterdata)
           setMeterdata((prev) => {
@@ -36,8 +39,8 @@ export function PowerInMeter({meters}: PowerInMeterProps) {
                 power
               },
             ];
-          });
-        });
+          });*/
+        }); 
       } catch (err) {
         console.log(err)
       }
