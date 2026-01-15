@@ -45,18 +45,17 @@ export const api = {
       return response.data;
     },
 
-  },
+    async getMeterDataByDate(name: string, fromDate: string, toDate: string) {
+      const response = await axiosInstance.get(`/meter/databydate`, {
+        params: {
+          meter_name: name,
+          from_date: fromDate,
+          to_date: toDate,
+        },
+      });
+      return response.data;
+    },
 
-
-  async getMeterDataByDate(name: string, fromDate: string, toDate: string) {
-    const response = await axiosInstance.get(`/meter/databydate`, {
-      params: {
-        meter_name: name,
-        from_date: fromDate,
-        to_date: toDate,
-      },
-    });
-    return response.data;
   },
 
   billing: {

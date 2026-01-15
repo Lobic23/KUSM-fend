@@ -1,10 +1,17 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
+import {
+  Zap,
+  Gauge,
+  Activity,
+  Plug
+} from "lucide-react";
 
 import { useMeterStore } from "@stores/meterStore";
 import type { GetLatestMeterDataResponse, MeterData, TimePoint } from "@utils/types";
 import { api } from "@utils/api";
 import { LineGraph, type LineGraphPoint } from "@components/LineGraph";
+import { BarGraph } from "@components/BarGraph";
 import { OverviewInfoCard } from "@components/OverviewInfoCard";
 
 export default function MeterDetail() {
@@ -24,6 +31,11 @@ export default function MeterDetail() {
     );
   });
 
+  const getToday = () => {
+    const now = new Date();
+    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+    return local.toISOString().split("T")[0];
+  };
 
   // Creates line graph plotable data
   const createPhaseData = (keyPrefix: string) => {
@@ -63,10 +75,20 @@ export default function MeterDetail() {
 
   // Fetch the meter data
   useEffect(() => {
+    if (!meter) return;
+
+    setLoading(true);
     setMeterReadings([]);
-    const fetchData = async () => {
+
+    const fetchTodayData = async () => {
       try {
-        const res = await api.getMeterDataByDate(meter.name, "2026-01-06", "2026-01-06");
+        const today = getToday();
+        console.log(today);
+        const res = await api.meter.getMeterDataByDate(
+          meter.name,
+          today,
+          today
+        );
 
         if (!res.success) {
           throw new Error(res.message);
@@ -80,8 +102,35 @@ export default function MeterDetail() {
       }
     };
 
+    fetchTodayData();
+  }, [meter]);
+
+
+  useEffect(() => {
     if (!meter) return;
-    fetchData();
+  
+    const interval = setInterval(async () => {
+      try {
+        const latest = await api.meter.getLatestMeterData(meter.meter_id);
+  
+        setMeterReadings(prev => {
+          if (!prev.length) return [latest];
+  
+          const last = prev[prev.length - 1];
+  
+          // Avoid duplicate timestamps
+          if (last.timestamp === latest.timestamp) {
+            return prev;
+          }
+  
+          return [...prev, latest].slice(-288);
+        });
+      } catch (err) {
+        console.error("Polling error:", err);
+      }
+    }, 5 * 60 * 1000); // 5 minutes
+  
+    return () => clearInterval(interval);
   }, [meter]);
 
   const powerData = useMemo(() => createPhaseData('active_power'), [meterReadings]);
@@ -89,27 +138,63 @@ export default function MeterDetail() {
   const voltageData = useMemo(() => createPhaseData('voltage'), [meterReadings]);
   const gridData = useMemo(() => createPhaseData('grid_consumption'), [meterReadings]);
 
+  const phasePowerContribution = useMemo(() => {
+    if (!meterReadings.length) return undefined;
+  
+    let sumA = 0;
+    let sumB = 0;
+    let sumC = 0;
+  
+    meterReadings.forEach(d => {
+      sumA += d.phase_A_active_power;
+      sumB += d.phase_B_active_power;
+      sumC += d.phase_C_active_power;
+    });
+  
+    const total = sumA + sumB + sumC;
+    if (total === 0) return [];
+  
+    return [
+      { label: "Phase A", value: +(sumA / total * 100).toFixed(1) },
+      { label: "Phase B", value: +(sumB / total * 100).toFixed(1) },
+      { label: "Phase C", value: +(sumC / total * 100).toFixed(1) },
+    ];
+  }, [meterReadings]);
+
   return (
     <div className="grid grid-rows-2 grid-rows-[30%_70%] gap-2 h-screen">
-      <div>
-        <div className="grid grid-rows-2 grid-rows-[30%_100%] gap-2">
-          <div className="mx-2 mt-2 text-xl">
-            Overview
-          </div>
-          <div className="grid grid-cols-4 auto-cols-fr gap-3">
-            <div>
-              <OverviewInfoCard title="Power" data={powerData?.average} unit="W"/>
-            </div>
-            <div>
-              <OverviewInfoCard title="Grid Consumption" data={gridData?.average} unit="Whr"/>
-            </div>
-            <div>
-              <OverviewInfoCard title="Current" data={currentData?.average} unit="A"/>
-            </div>
-            <div>
-              <OverviewInfoCard title="Voltage" data={voltageData?.average} unit="V"/>
-            </div>
-          </div>
+      <div className="grid grid-rows-[0.3fr_1fr] gap-2">
+        <div className="mx-2 mt-2 text-xl">
+          Overview
+        </div>
+        <div className="grid grid-cols-4 auto-cols-fr gap-3">
+          <OverviewInfoCard
+            title="Power"
+            data={powerData?.average}
+            unit="W"
+            icon={<Zap size={18} />}
+          />
+
+          <OverviewInfoCard
+            title="Grid Consumption"
+            data={gridData?.average}
+            unit="Wh"
+            icon={<Plug size={18} />}
+          />
+
+          <OverviewInfoCard
+            title="Current"
+            data={currentData?.average}
+            unit="A"
+            icon={<Activity size={18} />}
+          />
+
+          <OverviewInfoCard
+            title="Voltage"
+            data={voltageData?.average}
+            unit="V"
+            icon={<Gauge size={18} />}
+          />
         </div>
       </div>
 
@@ -121,6 +206,10 @@ export default function MeterDetail() {
           <LineGraph title="Current" points={currentData?.phaseData} />
         </div>
         <div className="row-span-2">
+          <BarGraph
+            title="Phase Power Contribution (%)"
+            data={phasePowerContribution}
+          />
         </div>
         <div className="">
           <LineGraph title="Voltage" points={voltageData?.phaseData} />
