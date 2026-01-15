@@ -10,11 +10,16 @@ type Props = {
 
 const getStatusColor = (status: MeterStatus): string => {
   switch (status) {
-    case "NORMAL": return "#22c55e";
-    case "ACCEPTABLE": return "#16a34a";
-    case "WARNING": return "#f59e0b";
-    case "CRITICAL": return "#dc2626";
-    default: return "#6b7280";
+    case "NORMAL":
+      return "#22c55e";
+    case "ACCEPTABLE":
+      return "#16a34a";
+    case "WARNING":
+      return "#f59e0b";
+    case "CRITICAL":
+      return "#dc2626";
+    default:
+      return "#6b7280";
   }
 };
 
@@ -25,7 +30,6 @@ export const UnbalanceCard: React.FC<Props> = ({ mode, data }) => {
       : (data as CurrentAnalysisItem).current_unbalance_percent;
 
   const val = typeof value === "number" ? value.toFixed(2) : "--";
-  const label = mode === "voltage" ? "Voltage Unbalance" : "Current Unbalance";
 
   return (
     <div style={styles.card}>
@@ -35,8 +39,6 @@ export const UnbalanceCard: React.FC<Props> = ({ mode, data }) => {
           {data.status}
         </span>
       </div>
-
-      <div style={styles.label}>{label}</div>
       <div style={styles.value}>{val}%</div>
 
       <div style={styles.footer}>
@@ -47,11 +49,41 @@ export const UnbalanceCard: React.FC<Props> = ({ mode, data }) => {
 };
 
 const styles: Record<string, React.CSSProperties> = {
-  card: { width: 320, padding: 16, borderRadius: 12, backgroundColor: "#fff", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" },
-  header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
-  meterName: { margin: 0, fontSize: 18, fontWeight: 600, color: "#111827" },
-  status: { color: "#fff", padding: "4px 12px", borderRadius: 999, fontSize: 12, fontWeight: 700 },
-  label: { fontSize: 13, color: "#6b7280", marginBottom: 6 },
-  value: { fontSize: 40, fontWeight: 700, color: "#111827" },
-  footer: { fontSize: 12, color: "#9ca3af", textAlign: "center", marginTop: 8 },
+  card: {
+    width: 320,
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: "#fff",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+    fontFamily: "sans-serif",
+  },
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  meterName: {
+    margin: 0,
+    fontSize: 18,
+    fontWeight: 600,
+    color: "#111827",
+  },
+  status: {
+    color: "#fff",
+    padding: "4px 12px",
+    borderRadius: 999,
+    fontSize: 12,
+    fontWeight: 700,
+  },
+  value: {
+    fontSize: 40,
+    fontWeight: 700,
+    color: "#111827",
+  },
+  footer: {
+    fontSize: 12,
+    color: "#9ca3af",
+    textAlign: "center",
+  },
 };

@@ -37,14 +37,14 @@ export default function Analysis() {
   return (
     <div style={{ padding: 16 }}>
 
-      <h2>Voltage Unbalance</h2>
+      <h1 style={{fontWeight: "bold"}}>Voltage Unbalance</h1>
       <div style={gridStyle}>
         {voltageItems.map((item) => (
           <UnbalanceCard key={"V-" + item.meter_name + item.timestamp} mode="voltage" data={item} />
         ))}
       </div>
 
-      <h2 style={{ marginTop: 24 }}>Current Unbalance</h2>
+      <h2 style={{ fontWeight: "bold", marginTop: 24 }}>Current Unbalance</h2>
       <div style={gridStyle}>
         {currentItems.map((item) => (
           <UnbalanceCard key={"C-" + item.meter_name + item.timestamp} mode="current" data={item} />
