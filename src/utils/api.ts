@@ -1,5 +1,5 @@
 import { axiosInstance } from "./api_provider";
-import type { GetAllMeterResponse, MeterData, User } from "./types";
+import type { CurrentAnalysisResponse, GetAllMeterResponse, MeterData, User, VoltageAnalysisResponse } from "./types";
 
 // API methods
 export const api = {
@@ -56,6 +56,16 @@ export const api = {
         to_date: toDate,
       },
     });
+    return response.data;
+  },
+
+  async getVoltageAnalysis(): Promise<VoltageAnalysisResponse> {
+    const response = await axiosInstance.get("/analysis/voltage");
+    return response.data;
+  },
+
+  async getCurrentAnalysis(): Promise<CurrentAnalysisResponse> {
+    const response = await axiosInstance.get("/analysis/current");
     return response.data;
   },
 

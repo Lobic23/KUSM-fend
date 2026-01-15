@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useEffect } from "react";
 
 import Login from "@pages/Login";
 import Dashboard from "@pages/Dashboard";
@@ -57,18 +58,11 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  // const { isAuthenticated, isLoading, initializeAuth } = useAuthStore();
-  // // useEffect(() => {
-  // //   const init = async () => {
-  // //     await initializeAuth();
+  const { fetchMeters } = useMeterStore();
 
-  // //     // Fetch meters only if logged in
-  // //     // if (useAuthStore.getState().isAuthenticated) {
-  // //       fetchMeters();
-  // //     // }
-  // //   };
-  // //   init();
-  // // }, [initializeAuth, fetchMeters]);
+  useEffect(() => {
+      fetchMeters();
+  }, [fetchMeters]);
 
   // if (isLoading) {
   //   return (
@@ -81,7 +75,7 @@ export default function App() {
   //   );
   // }
 
-  useMeterStore();
+
   return (
     <>
       <RouterProvider router={router} />

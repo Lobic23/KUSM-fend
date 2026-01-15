@@ -89,14 +89,43 @@ export interface EnergyDataDB {
   phase_B_exported_power: number;
   phase_C_grid_consumption: number;
   phase_C_exported_power: number;
-}
-// --------------------
+};
 
+export type MeterStatus = "NORMAL" | "ACCEPTABLE" | "WARNING" | "CRITICAL";
 
+export interface VoltageAnalysisItem {
+  meter_name: string;
+  timestamp: string;
 
+  phase_A_voltage?: number;
+  phase_B_voltage?: number;
+  phase_C_voltage?: number;
 
-// ---------------api types --------------------
-// Single item
+  voltage_unbalance_percent: number;
+  status: MeterStatus;
+};
+
+export interface VoltageAnalysisResponse {
+  success: boolean;
+  data: VoltageAnalysisItem[];
+};
+
+export interface CurrentAnalysisItem {
+  meter_name: string;
+  timestamp: string;
+
+  phase_A_current?: number;
+  phase_B_current?: number;
+  phase_C_current?: number;
+
+  current_unbalance_percent: number;
+  status: MeterStatus;
+};
+
+export interface CurrentAnalysisResponse {
+  success: boolean;
+  data: CurrentAnalysisItem[];
+};
 
 export interface GetAllMeterResponse  {
   success: boolean;
