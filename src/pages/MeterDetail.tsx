@@ -10,6 +10,7 @@ import {
 import { useMeterStore } from "@stores/meterStore";
 import type { GetLatestMeterDataResponse, MeterData, TimePoint } from "@utils/types";
 import { api } from "@utils/api";
+import { getToday } from "@utils/utils";
 import { LineGraph, type LineGraphPoint } from "@components/LineGraph";
 import { BarGraph } from "@components/BarGraph";
 import { OverviewInfoCard } from "@components/OverviewInfoCard";
@@ -21,6 +22,7 @@ export default function MeterDetail() {
 
   const [meterReadings, setMeterReadings] = useState<MeterData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<string>(getToday());
 
   const colors = ["#3b82f6", "#10b981", "#f59e0b"];
   const data120 = Array.from({ length: 288 }, (_, i) => {
@@ -30,12 +32,6 @@ export default function MeterDetail() {
       10 * Math.sin(i / 25)    // gentle variation
     );
   });
-
-  const getToday = () => {
-    const now = new Date();
-    const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
-    return local.toISOString().split("T")[0];
-  };
 
   // Creates line graph plotable data
   const createPhaseData = (keyPrefix: string) => {
@@ -63,9 +59,9 @@ export default function MeterDetail() {
     if (!a.length && !b.length && !c.length) return null;
 
     const phaseData = [
-      { label: "Phase A", data: a, color: "#3b82f6" },
-      { label: "Phase B", data: b, color: "#10b981" },
-      { label: "Phase C", data: c, color: "#f59e0b" },
+      { label: "Phase A", data: a, color: "#6D28D9" },
+      { label: "Phase B", data: b, color: "#0D9488" },
+      { label: "Phase C", data: c, color: "#D97706" },
     ];
 
     const average = count > 0 ? totalSum / count : 0;
@@ -76,24 +72,22 @@ export default function MeterDetail() {
   // Fetch the meter data
   useEffect(() => {
     if (!meter) return;
-
+  
     setLoading(true);
     setMeterReadings([]);
-
-    const fetchTodayData = async () => {
+  
+    const fetchDataForDate = async () => {
       try {
-        const today = getToday();
-        console.log(today);
         const res = await api.meter.getMeterDataByDate(
           meter.name,
-          today,
-          today
+          selectedDate,
+          selectedDate
         );
-
+  
         if (!res.success) {
           throw new Error(res.message);
         }
-
+  
         setMeterReadings(res.data);
       } catch (err) {
         console.error(err);
@@ -101,24 +95,25 @@ export default function MeterDetail() {
         setLoading(false);
       }
     };
-
-    fetchTodayData();
-  }, [meter]);
+  
+    fetchDataForDate();
+  }, [meter, selectedDate]);
 
 
   useEffect(() => {
     if (!meter) return;
   
+    const isToday = selectedDate === getToday();
+    if (!isToday) return;
+  
     const interval = setInterval(async () => {
       try {
         const latest = await api.meter.getLatestMeterData(meter.meter_id);
   
-        setMeterReadings(prev => {
+        setMeterReadings((prev) => {
           if (!prev.length) return [latest];
   
           const last = prev[prev.length - 1];
-  
-          // Avoid duplicate timestamps
           if (last.timestamp === latest.timestamp) {
             return prev;
           }
@@ -128,10 +123,10 @@ export default function MeterDetail() {
       } catch (err) {
         console.error("Polling error:", err);
       }
-    }, 5 * 60 * 1000); // 5 minutes
+    }, 5 * 60 * 1000);
   
     return () => clearInterval(interval);
-  }, [meter]);
+  }, [meter, selectedDate]);
 
   const powerData = useMemo(() => createPhaseData('active_power'), [meterReadings]);
   const currentData = useMemo(() => createPhaseData('current'), [meterReadings]);
@@ -164,8 +159,18 @@ export default function MeterDetail() {
   return (
     <div className="grid grid-rows-2 grid-rows-[30%_70%] gap-2 h-screen">
       <div className="grid grid-rows-[0.3fr_1fr] gap-2">
-        <div className="mx-2 mt-2 text-xl">
+        <div className="mx-2 mt-2 text-xl flex items-center justify-between">
           Overview
+          <input
+            type="date"
+            value={selectedDate}
+            max={getToday()}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="border border-gray-200 rounded-lg px-3 py-1.5
+                       text-sm text-gray-700 bg-white"
+
+            disabled={loading}
+          />
         </div>
         <div className="grid grid-cols-4 auto-cols-fr gap-3">
           <OverviewInfoCard
@@ -198,21 +203,22 @@ export default function MeterDetail() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 grid-rows-[50%_30%_30%] gap-4 h-screen">
+      <div className="grid grid-cols-2 grid-rows-[70%_40%_40%] gap-4 h-screen">
         <div className="col-span-2">
-          <LineGraph title="Power" points={powerData?.phaseData} />
+          <LineGraph title="Power (W)" points={powerData?.phaseData} />
         </div>
         <div className="">
-          <LineGraph title="Current" points={currentData?.phaseData} />
+          <LineGraph title="Current (A)" points={currentData?.phaseData} />
         </div>
         <div className="row-span-2">
           <BarGraph
             title="Phase Power Contribution (%)"
             data={phasePowerContribution}
+            colors={["#6D28D9", "#0D9488", "#D97706"]}
           />
         </div>
         <div className="">
-          <LineGraph title="Voltage" points={voltageData?.phaseData} />
+          <LineGraph title="Voltage (V)" points={voltageData?.phaseData} />
         </div>
       </div>
     </div>
