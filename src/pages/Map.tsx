@@ -443,7 +443,7 @@ function MeterDetailSidebar({
 
 export default function Map() {
   const { meters, isLoading, error, fetchMeters } = useMeterStore();
-  const { meterDataMap, outages, fetchLiveData, isLoading: liveDataLoading } = useLiveDataStore();
+  const { meterDataMap, fetchLiveData, isLoading: liveDataLoading } = useLiveDataStore();
 
   const [selectedMeter, setSelectedMeter] = useState<Meter | null>(null);
   const [hoveredMeter, setHoveredMeter] = useState<Meter | null>(null);
@@ -481,7 +481,15 @@ export default function Map() {
     );
   };
 
-  const isOutageFn = (meterId: number) => outages.includes(meterId);
+  const isOutageFn = (meterId: number): boolean => {
+    const data = meterDataMap[meterId];
+    if (!data) return false;
+    return (
+      data.phase_A_current === 0 &&
+      data.phase_B_current === 0 &&
+      data.phase_C_current === 0
+    );
+  };
 
   const getMarkerColor = (meter: Meter) => {
     if (activeLayers.outages && isOutageFn(meter.meter_id)) return "text-gray-600 fill-gray-300";
