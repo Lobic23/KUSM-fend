@@ -4,6 +4,7 @@ import {
   Receipt,
   Calculator,
   CalendarDays,
+  RefreshCcw,
 } from "lucide-react";
 
 import { useMeterStore } from "@/stores/meterStore";
@@ -30,6 +31,32 @@ export default function Billing() {
   const [weekDayData, setWeekDayData] = useState<BarGraphData[]|null>(null);
 
   const [loading, setLoading] = useState(true);
+
+  const reCalculateBill = async () => {
+    setLoading(true);
+
+    const doBilling = async () => {
+      try {
+        const res = await api.billing.doBill(year, month);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const getBill = async () => {
+      try {
+        const res = await api.billing.getBillingData(year, month);
+        setBillData(res);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    await doBilling();
+    await getBill();
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,20 +154,49 @@ export default function Billing() {
   }
 
   return (
-    <div className="grid grid-rows-[30%_70%] gap-3 h-screen">
+    <div className="grid grid-rows-[30%_70%] gap-5 h-screen">
       <div className="grid grid-rows-[0.3fr_1fr] gap-2">
         <div className="mx-2 mt-2 flex items-center justify-between">
           Overview
         
-          <input
-            type="month"
-            value={selectedMonth}
-            max={getCurrentMonth()}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-1.5
-                       text-sm text-gray-700 bg-white"
-            disabled={loading}
-          />
+          <div className="flex items-center gap-3">
+            <div className="relative group">
+              <button
+                onClick={reCalculateBill}
+                className={`
+                  p-2 rounded-lg border border-gray-200 bg-white
+                  transition-all
+                  hover:bg-gray-50 hover:border-gray-300
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                `}
+              >
+                <RefreshCcw
+                  size={16}
+                />
+              </button>
+
+              {/* Tooltip */}
+              <div
+                className="
+                  absolute right-0 mt-2 px-2 py-1 rounded-md
+                  bg-gray-900 text-white text-xs whitespace-nowrap
+                  opacity-0 group-hover:opacity-100
+                  transition-opacity pointer-events-none
+                "
+              >
+                Recalculate billing for this month
+              </div>
+            </div>
+            <input
+              type="month"
+              value={selectedMonth}
+              max={getCurrentMonth()}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="border border-gray-200 rounded-lg px-3 py-1.5
+                         text-sm text-gray-700 bg-white"
+              disabled={loading}
+            />
+          </div>
         </div>
         <div className="flex justify-center gap-20">
           <OverviewInfoCard

@@ -11,6 +11,8 @@ export type PieGraphProps = {
   title: string;
   data?: PieGraphPoint[];
   minSliceAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
 };
 
 const shortenLabel = (label: string, max = 12) => {
@@ -54,7 +56,13 @@ function adjustDataForMinimumSlice(data: PieGraphPoint[], minAngleDegrees: numbe
   });
 }
 
-export function PieGraph({ title, data, minSliceAngle = 5 }: PieGraphProps) {
+export function PieGraph({
+  title,
+  data,
+  minSliceAngle = 5,
+  innerRadius = 100,
+  outerRadius = 180,
+}: PieGraphProps) {
   if (!data) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center gap-3
@@ -82,42 +90,38 @@ export function PieGraph({ title, data, minSliceAngle = 5 }: PieGraphProps) {
   const adjustedData = adjustDataForMinimumSlice(safeData, minSliceAngle);
   
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100">
+    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm">
       {/* Header */}
       <div className="px-6 pt-5 pb-2 text-lg font-bold text-gray-900">
         {title}
       </div>
       {/* Chart */}
-      <div className="flex-1 flex items-center justify-center p-5">
-        <PieChart
-          width={420}
-          height={360}
-          series={[
-            {
-              data: adjustedData.map((item) => ({
-                id: item.id,
-                value: item.value,
-                label: item.label,
-                color: item.color,
-              })),
-              innerRadius: 100,
-              outerRadius: 180,
-              paddingAngle: 2,
-              cornerRadius: 4,
-              highlightScope: {
-                faded: "global",
-                highlighted: "item",
-              },
-              faded: {
-                additionalRadius: -6,
-              },
+      <PieChart
+        series={[
+          {
+            data: adjustedData.map((item) => ({
+              id: item.id,
+              value: item.value,
+              label: item.label,
+              color: item.color,
+            })),
+            innerRadius: innerRadius,
+            outerRadius: outerRadius,
+            paddingAngle: 2,
+            cornerRadius: 4,
+            highlightScope: {
+              faded: "global",
+              highlighted: "item",
             },
-          ]}
-          slotProps={{
-            legend: { hidden: true },
-          }}
-        />
-      </div>
+            faded: {
+              additionalRadius: -6,
+            },
+          },
+        ]}
+        slotProps={{
+          legend: { hidden: true },
+        }}
+      />
     </div>
   );
 }

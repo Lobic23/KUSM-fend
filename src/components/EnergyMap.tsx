@@ -39,7 +39,7 @@ export function EnergyMap({
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100">
+    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm px-5">
       <div className="px-6 py-4 text-sm font-medium text-gray-900">
         {title}
       </div>
@@ -48,7 +48,7 @@ export function EnergyMap({
         value={data}
         startDate={new Date(start_date)}
         endDate={new Date(end_date)}
-        rectSize={12}
+        rectSize={13}
         space={5}
         legendCellSize={0}
         panelColors={colors}

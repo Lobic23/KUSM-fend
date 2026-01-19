@@ -65,8 +65,21 @@ export const api = {
       });
 
       return response.data;
-    }
+    },
 
+    async getAverageConsumptionAndPowerYearly(year: number) {
+      const response = await axiosInstance.get("/analysis/avg_consumption_yearly", {
+        params: {
+          year: year
+        }
+      });
+      return response.data
+    },
+
+    async getPreviousCurrentPower() {
+      const response = await axiosInstance.get("/analysis/prev_curr_power");
+      return response.data;
+    }
   },
 
   async getVoltageAnalysis(): Promise<VoltageAnalysisResponse> {
@@ -84,13 +97,13 @@ export const api = {
       const response = await axiosInstance.get(`/billing/${year}/${month}`);
       return response.data;
     },
+
+    async doBill(year: number, month: number) {
+      const response = await axiosInstance.post(`/billing/${year}/${month}`);
+      return response.data;
+    }
   },
 
-  async getAverageConsmuptionAndPower(): Promise<GetAverageConsumptionAndPowerResponse> {
-    const response = await axiosInstance.get("/analysis/avg_consumption");
-    return response.data
-  }
-  
 };
 
 export default axiosInstance;

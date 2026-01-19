@@ -37,7 +37,7 @@ export function BarGraph({
   const values = data.map((d) => d.value);
 
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100">
+    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm">
       <div className="px-6 pt-5 pb-2 text-sm font-medium text-gray-900">
         {title}
       </div>

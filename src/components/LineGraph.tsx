@@ -87,7 +87,7 @@ export function LineGraph({ title, points }: LineGraphProps) {
   }, [safePoints]);
 
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100">
+    <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm">
       <div className="px-6 py-4 text-sm font-medium text-gray-900">
         {title}
       </div>
