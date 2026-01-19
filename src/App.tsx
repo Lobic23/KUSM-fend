@@ -10,6 +10,7 @@ import Map from "@pages/Map";
 import Billing from "@pages/Billing";
 import { useMeterStore } from "./stores/meterStore";
 import MapAdmin from "./pages/MapAdmin";
+import { useLatestDataStore } from "./stores/latestDataStore";
 
 /*
  * Application Routes
@@ -58,22 +59,24 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  const { fetchMeters } = useMeterStore();
+  const { fetchMeters, meters } = useMeterStore();
+  const { fetchLatestData } = useLatestDataStore();
 
   useEffect(() => {
-      fetchMeters();
+    fetchMeters();
   }, [fetchMeters]);
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-  //       <div className="text-center">
-  //         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-  //         <p className="mt-4 text-gray-600">Loading...</p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+
+  useEffect(() => {
+    if (meters.length > 0) {
+      fetchLatestData();
+      const intervalId = setInterval(() => {
+        fetchLatestData();
+      }, 5 * 60 * 100);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [meters.length, fetchLatestData]);
 
 
   return (

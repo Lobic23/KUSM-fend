@@ -9,9 +9,9 @@ interface LatestDataState {
   error: string | null;
   lastUpdate: string | null;
 
-  fetchLiveData: () => Promise<void>;
+  fetchLatestData: () => Promise<void>;
   fetchSingleMeterData: (meterId: number) => Promise<void>;
-  clearLiveData: () => void;
+  clearLatestData: () => void;
 }
 
 export const useLatestDataStore = create<LatestDataState>((set, get) => ({
@@ -20,7 +20,7 @@ export const useLatestDataStore = create<LatestDataState>((set, get) => ({
   error: null,
   lastUpdate: null,
 
-  fetchLiveData: async () => {
+  fetchLatestData: async () => {
     set({ isLoading: true, error: null });
 
     try {
@@ -33,16 +33,26 @@ export const useLatestDataStore = create<LatestDataState>((set, get) => ({
 
       // Fetch data for all meters in parallel
       const promises = meterIds.map(id => api.meter.getLatestMeterData(id));
-      await Promise.allSettled(promises);
+      const results = await Promise.allSettled(promises);
 
       const meterDataByMeterId: Record<number, MeterData> = {};
-      const timestamp = new Date().toISOString();
+      
+      // Process the results and populate the map
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          meterDataByMeterId[meterIds[index]] = result.value;
+        } else {
+          console.error(`Failed to fetch data for meter ${meterIds[index]}:`, result.reason);
+        }
+      });
 
+      const timestamp = new Date().toISOString();
       set({
         meterDataMap: meterDataByMeterId,
         lastUpdate: timestamp,
         isLoading: false,
       });
+      // console.log("meterDataMap Loaded", meterDataByMeterId);
     } catch (err) {
       console.error("Failed to fetch live data:", err);
       set({
@@ -71,7 +81,7 @@ export const useLatestDataStore = create<LatestDataState>((set, get) => ({
     }
   },
 
-  clearLiveData: () => {
+  clearLatestData: () => {
     set({
       meterDataMap: {},
       lastUpdate: null,

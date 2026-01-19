@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { X, MapPin, Zap, AlertTriangle, Activity, Layers, Thermometer } from "lucide-react";
 import { useMeterStore } from "@/stores/meterStore";
-import { useLiveDataStore } from "@/stores/liveDataStore";
 import type { Meter, MeterData } from "@/utils/types";
+import { useLatestDataStore } from "@/stores/latestDataStore";
 
 const VOLTAGE_LIMITS = {
   normal: { min: 200, max: 220 },
@@ -442,8 +442,8 @@ function MeterDetailSidebar({
 }
 
 export default function Map() {
-  const { meters, isLoading, error, fetchMeters } = useMeterStore();
-  const { meterDataMap, fetchLiveData, isLoading: liveDataLoading } = useLiveDataStore();
+  const { meters, error} = useMeterStore();
+  const { meterDataMap, isLoading } = useLatestDataStore();
 
   const [selectedMeter, setSelectedMeter] = useState<Meter | null>(null);
   const [hoveredMeter, setHoveredMeter] = useState<Meter | null>(null);
@@ -454,12 +454,6 @@ export default function Map() {
   });
 
   const imageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    fetchMeters().then(() => {
-      fetchLiveData();
-    });
-  }, [fetchMeters, fetchLiveData]);
 
   const toggleLayer = (layer: "markers" | "voltageAlerts" | "outages") => {
     setActiveLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
@@ -616,13 +610,6 @@ export default function Map() {
                     active={activeLayers.outages}
                     onClick={toggleLayer}
                   />
-                  <button
-                    onClick={fetchLiveData}
-                    disabled={liveDataLoading}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {liveDataLoading ? "Refreshing..." : "Refresh"}
-                  </button>
                 </div>
               </div>
 

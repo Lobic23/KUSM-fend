@@ -8,16 +8,18 @@ import {
 } from "lucide-react";
 
 import { useMeterStore } from "@stores/meterStore";
-import type { GetLatestMeterDataResponse, MeterData, TimePoint } from "@utils/types";
+import type { MeterData, TimePoint } from "@utils/types";
 import { api } from "@utils/api";
 import { getToday } from "@utils/utils";
-import { LineGraph, type LineGraphPoint } from "@components/LineGraph";
+import { LineGraph} from "@components/LineGraph";
 import { BarGraph } from "@components/BarGraph";
 import { OverviewInfoCard } from "@components/OverviewInfoCard";
+import { useLatestDataStore } from "@/stores/latestDataStore";
 
 export default function MeterDetail() {
   const { meterId } = useParams<{ meterId: string }>();
   const meters = useMeterStore((s) => s.meters);
+  const { meterDataMap } = useLatestDataStore();
   const meter = meters.find((m) => m.meter_id === Number(meterId));
 
   const [meterReadings, setMeterReadings] = useState<MeterData[]>([]);
@@ -72,10 +74,10 @@ export default function MeterDetail() {
   // Fetch the meter data
   useEffect(() => {
     if (!meter) return;
-  
+
     setLoading(true);
     setMeterReadings([]);
-  
+
     const fetchDataForDate = async () => {
       try {
         const res = await api.meter.getMeterDataByDate(
@@ -83,11 +85,11 @@ export default function MeterDetail() {
           selectedDate,
           selectedDate
         );
-  
+
         if (!res.success) {
           throw new Error(res.message);
         }
-  
+
         setMeterReadings(res.data);
       } catch (err) {
         console.error(err);
@@ -95,38 +97,34 @@ export default function MeterDetail() {
         setLoading(false);
       }
     };
-  
+
     fetchDataForDate();
   }, [meter, selectedDate]);
 
 
   useEffect(() => {
     if (!meter) return;
-  
+
     const isToday = selectedDate === getToday();
     if (!isToday) return;
-  
-    const interval = setInterval(async () => {
-      try {
-        const latest = await api.meter.getLatestMeterData(meter.meter_id);
-  
-        setMeterReadings((prev) => {
-          if (!prev.length) return [latest];
-  
-          const last = prev[prev.length - 1];
-          if (last.timestamp === latest.timestamp) {
-            return prev;
-          }
-  
-          return [...prev, latest].slice(-288);
-        });
-      } catch (err) {
-        console.error("Polling error:", err);
+
+    const latestData = meterDataMap[meter.meter_id];
+    if (!latestData) return;
+
+
+    setMeterReadings((prev) => {
+      if (!prev.length) return [latestData];
+
+      const last = prev[prev.length - 1];
+      if (last.timestamp === latestData.timestamp) {
+        return prev;
       }
-    }, 5 * 60 * 1000);
-  
-    return () => clearInterval(interval);
-  }, [meter, selectedDate]);
+
+      // Add new reading and keep last 288 readings (24 hours at 5 min intervals)
+      return [...prev, latestData].slice(-288);
+    });
+
+  }, [meter, selectedDate, meterDataMap]);
 
   const powerData = useMemo(() => createPhaseData('active_power'), [meterReadings]);
   const currentData = useMemo(() => createPhaseData('current'), [meterReadings]);
@@ -135,20 +133,20 @@ export default function MeterDetail() {
 
   const phasePowerContribution = useMemo(() => {
     if (!meterReadings.length) return undefined;
-  
+
     let sumA = 0;
     let sumB = 0;
     let sumC = 0;
-  
+
     meterReadings.forEach(d => {
       sumA += d.phase_A_active_power;
       sumB += d.phase_B_active_power;
       sumC += d.phase_C_active_power;
     });
-  
+
     const total = sumA + sumB + sumC;
     if (total === 0) return [];
-  
+
     return [
       { label: "Phase A", value: +(sumA / total * 100).toFixed(1) },
       { label: "Phase B", value: +(sumB / total * 100).toFixed(1) },
