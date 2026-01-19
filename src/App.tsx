@@ -8,9 +8,9 @@ import Analysis from "@pages/Analysis";
 import MeterDetail from "@pages/MeterDetail";
 import Map from "@pages/Map";
 import Billing from "@pages/Billing";
-import { useMeterStore } from "./stores/meterStore";
-import MapAdmin from "./pages/MapAdmin";
-import { useLatestDataStore } from "./stores/latestDataStore";
+import { useMeterStore } from "@stores/meterStore";
+import MapAdmin from "@pages/MapAdmin";
+import { useLatestDataStore } from "@stores/latestDataStore";
 
 /*
  * Application Routes
@@ -72,7 +72,7 @@ export default function App() {
       fetchLatestData();
       const intervalId = setInterval(() => {
         fetchLatestData();
-      }, 5 * 60 * 100);
+      }, 5 * 60 * 1000);
 
       return () => clearInterval(intervalId);
     }
