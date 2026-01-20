@@ -104,6 +104,32 @@ export const api = {
     }
   },
 
+  // Add this prediction object to your existing api object in api.ts
+
+  prediction: {
+    async getSinglePrediction(params: SinglePredictionRequest): Promise<SinglePredictionResponse> {
+      const response = await axiosInstance.post("api/prediction/single", params);
+      return response.data;
+    },
+
+    async getDayPrediction(month: number, dayOfWeek: number, intervalMinutes: number = 5): Promise<DayPredictionResponse> {
+      const response = await axiosInstance.post("api/prediction/day", {
+        month,
+        day_of_week: dayOfWeek,
+        interval_minutes: intervalMinutes,
+      });
+      return response.data;
+    },
+
+    async getWeekPrediction(month: number, startDay: number = 0): Promise<{ week_predictions: WeekPrediction; summary: any }> {
+      const response = await axiosInstance.post("api/prediction/week", {
+        month,
+        start_day: startDay,
+      });
+      return response.data;
+    },
+  },
+
 };
 
 export default axiosInstance;

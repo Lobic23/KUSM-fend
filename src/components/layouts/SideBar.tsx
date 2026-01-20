@@ -3,8 +3,8 @@ import {
   BarChart3,
   Map,
   Gauge,
-  Box,
   Receipt,
+  TrendingUp, // ADD THIS for Prediction icon
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useMeterStore } from "@/stores/meterStore";
@@ -16,6 +16,7 @@ export default function SideBar() {
   const mainMenuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/" },
     { name: "Analysis", icon: BarChart3, path: "/analysis" },
+    { name: "Prediction", icon: TrendingUp, path: "/prediction" }, // ADD THIS
     { name: "Billing", icon: Receipt, path: "/billing" },
     { name: "Map", icon: Map, path: "/map" },
   ];

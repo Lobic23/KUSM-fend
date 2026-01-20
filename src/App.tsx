@@ -8,6 +8,7 @@ import Analysis from "@pages/Analysis";
 import MeterDetail from "@pages/MeterDetail";
 import Map from "@pages/Map";
 import Billing from "@pages/Billing";
+import Prediction from "@pages/Prediction"; // ADD THIS
 import { useMeterStore } from "@stores/meterStore";
 import MapAdmin from "@pages/MapAdmin";
 import { useLatestDataStore } from "@stores/latestDataStore";
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
         path: "/analysis",
         element: <Analysis />,
         handle: { title: "Analysis" },
+      },
+      {
+        path: "/prediction", // ADD THIS
+        element: <Prediction />,
+        handle: { title: "Prediction" },
       },
       {
         path: "/map",
@@ -66,7 +72,6 @@ export default function App() {
     fetchMeters();
   }, [fetchMeters]);
 
-
   useEffect(() => {
     if (meters.length > 0) {
       fetchLatestData();
@@ -77,7 +82,6 @@ export default function App() {
       return () => clearInterval(intervalId);
     }
   }, [meters.length, fetchLatestData]);
-
 
   return (
     <>

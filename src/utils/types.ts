@@ -207,3 +207,61 @@ export interface BulkLocationUpdate {
     y: number;
   }>;
 }
+
+// Prediction Types
+export interface PredictionPoint {
+  hour: number;
+  minute: number;
+  time: string;
+  power_kw: number;
+}
+
+export interface DayPredictionSummary {
+  min_power: number;
+  max_power: number;
+  avg_power: number;
+  total_energy_kwh: number;
+  data_points: number;
+}
+
+export interface DayPredictionResponse {
+  month: number;
+  day_of_week: number;
+  day_name: string;
+  predictions: PredictionPoint[];
+  summary: DayPredictionSummary;
+}
+
+export interface SinglePredictionRequest {
+  month: number;
+  day_of_week: number;
+  hour: number;
+  minute: number;
+}
+
+export interface SinglePredictionResponse {
+  power_kw: number;
+  month: number;
+  day_of_week: number;
+  hour: number;
+  minute: number;
+  timestamp: string;
+}
+
+export interface ModelStats {
+  mae: number;
+  rmse: number;
+  r2: number;
+  train_samples: number;
+  test_samples: number;
+  power_range: {
+    min: number;
+    max: number;
+    mean: number;
+  };
+  trained_at: string;
+}
+
+export interface WeekPrediction {
+  [day: string]: PredictionPoint[];
+}
