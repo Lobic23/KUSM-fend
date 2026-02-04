@@ -1,5 +1,12 @@
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
+export type MeterPowerRow = {
+  meter_name: string;
+  power: number;
+  trend: "up" | "down" | "same";
+  deltaPercent: number;
+};
+
 export function PowerTable({ data }: { data?: MeterPowerRow[] | null }) {
   if (!data) {
     return (

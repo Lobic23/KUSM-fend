@@ -100,6 +100,62 @@ export interface VoltageAnalysisResponse {
   data: VoltageAnalysisItem[];
 };
 
+export interface AvgConsumptionYearlyData {
+  meter_name: string;
+  year: number;
+  average_power: number;
+  average_energy: number;
+}
+
+export interface PreviousCurrentPowerData {
+  meter_name: string;
+  current_power: number | null;
+  previous_power: number | null;
+}
+export interface AvgDailyEnergyData {
+  date: string; // YYYY-MM-DD
+  average_energy: number;
+}
+export type MonthKey =
+  | "jan" | "feb" | "mar" | "apr"
+  | "may" | "jun" | "jul" | "aug"
+  | "sep" | "oct" | "nov" | "dec";
+
+export interface MonthlyAverageData {
+  average_current: number;
+  average_voltage: number;
+  average_power: number;
+  average_energy: number;
+}
+
+export type MonthlyAverageDataMap = Record<MonthKey, MonthlyAverageData>;
+
+
+export type VoltageStatus = "NO_DATA" | "NORMAL" | "WARNING" | "CRITICAL";
+
+export interface VoltageAnalysisData {
+  meter_name: string;
+  timestamp?: string;
+  phase_A_voltage?: number;
+  phase_B_voltage?: number;
+  phase_C_voltage?: number;
+  voltage_unbalance_percent?: number;
+  status: VoltageStatus;
+}
+
+export type CurrentStatus = "NO_DATA" | "NORMAL" | "WARNING" | "CRITICAL";
+
+export interface CurrentAnalysisData {
+  meter_name: string;
+  timestamp?: string;
+  phase_A_current?: number;
+  phase_B_current?: number;
+  phase_C_current?: number;
+  current_unbalance_percent?: number;
+  status: CurrentStatus;
+}
+
+
 export interface CurrentAnalysisItem {
   meter_name: string;
   timestamp: string;

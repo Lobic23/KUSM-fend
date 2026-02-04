@@ -9,16 +9,12 @@ export type PieGraphPoint = {
 
 export type PieGraphProps = {
   title: string;
-  data?: PieGraphPoint[];
+  data: PieGraphPoint[] | null;
   minSliceAngle?: number;
   innerRadius?: number;
   outerRadius?: number;
 };
 
-const shortenLabel = (label: string, max = 12) => {
-  if (label.length <= max) return label;
-  return label.slice(0, max - 1) + "…";
-};
 
 // Adjust data to ensure minimum slice thickness
 function adjustDataForMinimumSlice(data: PieGraphPoint[], minAngleDegrees: number = 5): PieGraphPoint[] {
@@ -109,17 +105,12 @@ export function PieGraph({
             outerRadius: outerRadius,
             paddingAngle: 2,
             cornerRadius: 4,
-            highlightScope: {
-              faded: "global",
-              highlighted: "item",
-            },
             faded: {
               additionalRadius: -6,
             },
           },
         ]}
         slotProps={{
-          legend: { hidden: true },
         }}
       />
     </div>

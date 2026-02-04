@@ -1,56 +1,48 @@
 import { useEffect, useState, useMemo } from "react";
 
-import { useMeterStore } from "@stores/meterStore";
-import { api } from "@/lib/api";
-import { getYearRange, getColorByID } from "@/lib/utils";
 import {
   EnergyMap,
-  type EnergyMapProps,
   type EnergyMapValue
 } from "@components/EnergyMap";
 import {
   PowerTable,
-  type MeterPowerDelta,
   type MeterPowerRow,
 } from "@components/PowerTable";
 import {
   PieGraph,
   type PieGraphPoint,
-  type PieGraphProps
 } from "@components/PieGraph";
+import { api } from "@/lib/api";
+import { getColorByID, getYearRange } from "@/lib/utils";
 
 
 export default function Dashboard() {
   const [energyMapData, setEnergyMapData] = useState<EnergyMapValue[] | null>(null);
   const [powerTable, setPowerTable] = useState<MeterPowerRow[] | null>(null);
   const [meterEnergy, setMeterEnergy] = useState<PieGraphPoint[] | null>(null);
-  const [loading, setLoading] = useState(true);
 
   const currentYear = new Date().getFullYear();
   const { start, end } = useMemo(() => getYearRange(), []);
-  const meters = useMeterStore((s) => s.meters);
   const POLL_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
   useEffect(() => {
-    setLoading(true);
     api.meter
       .getAvgDailyEnergy(start, end)
       .then((energyData) => {
         setEnergyMapData(
-          energyData.map((d) => ({
+          energyData.map((d: { date: any; average_energy: any; }) => ({
             date: d.date,
             count: d.average_energy,
           }))
         );
       })
-      .finally(() => setLoading(false));
   }, [start, end]);
 
   useEffect(() => {
     api.meter
       .getAverageConsumptionAndPowerYearly(currentYear)
       .then((resData) => {
-        const points = resData.map((item, index) => ({
+        const points = resData.map((item: { meter_name: any; average_power: any; }, index: string | number) => ({
           id: index,
           label: item.meter_name,
           value: item.average_power,
@@ -60,29 +52,30 @@ export default function Dashboard() {
         setMeterEnergy(points);
       });
   }, [currentYear]);
-  
+
   useEffect(() => {
     const fetchPower = async () => {
       const res = await api.meter.getPreviousCurrentPower();
-  
-      const rows = res.map((m: MeterPowerDelta) => {
-        const diff = m.current_power - m.previous_power;
-        const percent = m.previous_power === 0 ? 0 : (diff / m.previous_power) * 100;
-  
+      const rows = res.map((m) => {
+        const currentPower = m.current_power ?? 0;
+        const previousPower = m.previous_power ?? 0;
+        const diff = currentPower - previousPower;
+        const percent = previousPower === 0 ? 0 : (diff / previousPower) * 100;
+
         return {
           meter_name: m.meter_name,
-          power: m.current_power,
+          power: currentPower,
           deltaPercent: +percent.toFixed(1),
           trend: diff > 0 ? "up" : diff < 0 ? "down" : "same",
-        };
+        } as const;
       });
-  
+
       setPowerTable(rows);
     };
-  
+
     fetchPower();
     const id = setInterval(fetchPower, POLL_INTERVAL);
-  
+
     return () => {
       clearInterval(id);
     };
@@ -105,7 +98,7 @@ export default function Dashboard() {
       />
       <div className="grid grid-cols-[50%_50%] gap-2">
         <PowerTable data={powerTable} />
-    
+
         <PieGraph
           title="Average Energy Distribution Across Meters (Wh)"
           data={meterEnergy}

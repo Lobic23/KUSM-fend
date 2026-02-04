@@ -1,5 +1,5 @@
 import { axiosInstance } from "./api_provider";
-import type { CurrentAnalysisResponse, DayPredictionResponse, GetAllMeterResponse, MeterData, SinglePredictionRequest, SinglePredictionResponse, VoltageAnalysisResponse, WeekPrediction } from "./types";
+import type { AvgConsumptionYearlyData, AvgDailyEnergyData, CurrentAnalysisResponse, DayPredictionResponse, GetAllMeterResponse, MeterData, PreviousCurrentPowerData, SinglePredictionRequest, SinglePredictionResponse, VoltageAnalysisResponse, WeekPrediction } from "./types";
 
 // API methods
 export const api = {
@@ -42,7 +42,7 @@ export const api = {
       return response.data;
     },
 
-    async getAvgDailyEnergy(fromDate: string, toDate: string) {
+    async getAvgDailyEnergy(fromDate: string, toDate: string): Promise<AvgDailyEnergyData[]> {
       const response = await axiosInstance.get(`/analysis/avg_daily_energy`, {
         params: {
           from_date: fromDate,
@@ -53,7 +53,7 @@ export const api = {
       return response.data;
     },
 
-    async getAverageConsumptionAndPowerYearly(year: number) {
+    async getAverageConsumptionAndPowerYearly(year: number): Promise<AvgConsumptionYearlyData[]> {
       const response = await axiosInstance.get("/analysis/avg_consumption_yearly", {
         params: {
           year: year
@@ -62,7 +62,7 @@ export const api = {
       return response.data
     },
 
-    async getPreviousCurrentPower() {
+    async getPreviousCurrentPower(): Promise<PreviousCurrentPowerData[]>  {
       const response = await axiosInstance.get("/analysis/prev_curr_power");
       return response.data;
     }
