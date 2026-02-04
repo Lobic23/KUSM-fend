@@ -1,4 +1,4 @@
-import type { Meter, MeterData } from "@/utils/types";
+import type { Meter, MeterData } from "@/lib/types";
 import { MapPin, X, AlertTriangle, Zap, Activity } from "lucide-react";
 import { StatCard } from "./StatsCard";
 

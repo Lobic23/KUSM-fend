@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { api } from "@/utils/api";
-import type { Meter, GetAllMeterResponse } from "@/utils/types";
+import { api } from "@/lib/api";
+import type { Meter, GetAllMeterResponse } from "@/lib/types";
 
 interface MeterLocation {
   meter_id: number;

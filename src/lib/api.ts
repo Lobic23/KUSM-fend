@@ -1,26 +1,12 @@
 import { axiosInstance } from "./api_provider";
-import type { CurrentAnalysisResponse, GetAllMeterResponse, MeterData, User, VoltageAnalysisResponse, GetAverageConsumptionAndPowerResponse } from "./types";
+import type { CurrentAnalysisResponse, DayPredictionResponse, GetAllMeterResponse, MeterData, SinglePredictionRequest, SinglePredictionResponse, VoltageAnalysisResponse, WeekPrediction } from "./types";
 
 // API methods
 export const api = {
   system: {
     async healthCheck(): Promise<boolean> {
       const res = await axiosInstance.get("/");
-      return res.status === 200;
-    },
-  },
-
-  auth: {
-    async getGoogleAuthUrl(): Promise<string> {
-      const res = await axiosInstance.get("/auth/login/google");
-      return res.data.url;
-    },
-  },
-
-  user: {
-    async me(): Promise<User> {
-      const res = await axiosInstance.get("/users/me");
-      return res.data;
+      return res.status === 200; ``
     },
   },
 
@@ -29,7 +15,7 @@ export const api = {
       const response = await axiosInstance.get("/meter");
       return response.data;
     },
-  
+
     async getLatestMeterData(id: number): Promise<MeterData> {
       const response = await axiosInstance.get(`/meter/${id}/latest`);
       return response.data;
@@ -39,7 +25,7 @@ export const api = {
       const response = await axiosInstance.put(`/meter/${meterId}/location`, location);
       return response.data;
     },
-  
+
     async updateMeterLocations(locations: Array<{ meter_id: number; x: number; y: number }>) {
       const response = await axiosInstance.put(`/meter/locations`, { locations });
       return response.data;
@@ -82,14 +68,16 @@ export const api = {
     }
   },
 
-  async getVoltageAnalysis(): Promise<VoltageAnalysisResponse> {
-    const response = await axiosInstance.get("/analysis/voltage");
-    return response.data;
-  },
+  analysis: {
+    async getVoltageAnalysis(): Promise<VoltageAnalysisResponse> {
+      const response = await axiosInstance.get("/analysis/voltage");
+      return response.data;
+    },
 
-  async getCurrentAnalysis(): Promise<CurrentAnalysisResponse> {
-    const response = await axiosInstance.get("/analysis/current");
-    return response.data;
+    async getCurrentAnalysis(): Promise<CurrentAnalysisResponse> {
+      const response = await axiosInstance.get("/analysis/current");
+      return response.data;
+    },
   },
 
   billing: {
@@ -104,7 +92,6 @@ export const api = {
     }
   },
 
-  // Add this prediction object to your existing api object in api.ts
 
   prediction: {
     async getSinglePrediction(params: SinglePredictionRequest): Promise<SinglePredictionResponse> {

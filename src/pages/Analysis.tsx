@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { api } from "@utils/api";
+import { api } from "@/lib/api";
 import { UnbalanceCard } from "@components/UnbalanceCard";
-import type { VoltageAnalysisItem, CurrentAnalysisItem } from "@utils/types";
+import type { VoltageAnalysisItem, CurrentAnalysisItem } from "@/lib/types";
 
 export default function Analysis() {
   const [voltageItems, setVoltageItems] = useState<VoltageAnalysisItem[]>([]);
@@ -16,8 +16,8 @@ export default function Analysis() {
         setError(null);
 
         const [voltageRes, currentRes] = await Promise.all([
-          api.getVoltageAnalysis(),
-          api.getCurrentAnalysis(),
+          api.analysis.getVoltageAnalysis(),
+          api.analysis.getCurrentAnalysis(),
         ]);
 
         setVoltageItems(voltageRes.data);

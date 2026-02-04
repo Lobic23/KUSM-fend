@@ -8,9 +8,9 @@ import {
 } from "lucide-react";
 
 import { useMeterStore } from "@/stores/meterStore";
-import type { BillingResponse } from "@utils/types";
-import { api } from "@utils/api";
-import { COLORS, getCurrentMonth, getColorByID, formatMoney } from "@utils/utils";
+import type { BillingResponse } from "@/lib/types";
+import { api } from "@/lib/api";
+import { COLORS, getCurrentMonth, getColorByID, formatMoney } from "@/lib/utils";
 import { OverviewInfoCard } from "@components/OverviewInfoCard";
 import { LineGraph, type LineGraphPoint } from "@components/LineGraph";
 import { PieGraph, type PieGraphPoint } from "@components/PieGraph";

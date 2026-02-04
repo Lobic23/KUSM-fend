@@ -8,9 +8,9 @@ import {
 } from "lucide-react";
 
 import { useMeterStore } from "@stores/meterStore";
-import type { MeterData, TimePoint } from "@utils/types";
-import { api } from "@utils/api";
-import { getToday } from "@utils/utils";
+import type { MeterData, TimePoint } from "@/lib/types";
+import { api } from "@/lib/api";
+import { getToday } from "@/lib/utils";
 import { LineGraph} from "@components/LineGraph";
 import { BarGraph } from "@components/BarGraph";
 import { OverviewInfoCard } from "@components/OverviewInfoCard";

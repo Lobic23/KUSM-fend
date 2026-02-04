@@ -1,17 +1,5 @@
 // -----------------DB types----------------
 
-import { Type } from "lucide-react";
-
-export interface User {
-  id: string;
-  email: string;
-  name?: string;
-  picture?: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface Meter {
   meter_id: number;
   name: string;

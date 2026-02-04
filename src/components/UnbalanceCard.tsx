@@ -1,5 +1,5 @@
 import React from "react";
-import type { MeterStatus, VoltageAnalysisItem, CurrentAnalysisItem } from "@utils/types";
+import type { MeterStatus, VoltageAnalysisItem, CurrentAnalysisItem } from "@/lib/types";
 
 type Mode = "voltage" | "current";
 

@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Zap, AlertTriangle, Activity, Thermometer } from "lucide-react";
 import { useMeterStore } from "@/stores/meterStore";
-import type { Meter } from "@/utils/types";
+import type { Meter } from "@/lib/types";
 import { useLatestDataStore } from "@/stores/latestDataStore";
 import { StatCard } from "@/components/Map/StatsCard";
 import { MapImageAndOverlays } from "@/components/Map/MapImageAndOverlays";

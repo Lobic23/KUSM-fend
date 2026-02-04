@@ -1,5 +1,5 @@
 import { useMeterStore } from "@/stores/meterStore";
-import type { Meter } from "@/utils/types";
+import type { Meter } from "@/lib/types";
 import { Trash2, Save, MapPin } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "react-hot-toast"; 

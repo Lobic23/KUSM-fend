@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
 
 import { useMeterStore } from "@stores/meterStore";
-import { api } from "@utils/api";
-import { getYearRange, getColorByID } from "@utils/utils";
+import { api } from "@/lib/api";
+import { getYearRange, getColorByID } from "@/lib/utils";
 import {
   EnergyMap,
   type EnergyMapProps,

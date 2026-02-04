@@ -17,7 +17,7 @@
       "@assets/*": ["src/assets/*"],
       "@pages/*": ["src/pages/*"],
       "@stores/*": ["src/stores/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/lib/*"]
     },
     "strict": true,
     "noUnusedLocals": true,

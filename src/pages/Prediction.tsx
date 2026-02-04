@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { api } from "@utils/api";
-import type { DayPredictionResponse, ModelStats } from "@utils/types";
+import { api } from "@/lib/api";
+import type { DayPredictionResponse, ModelStats } from "@/lib/types";
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",

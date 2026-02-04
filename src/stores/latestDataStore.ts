@@ -1,5 +1,5 @@
-import { api } from "@/utils/api";
-import type { MeterData } from "@/utils/types";
+import { api } from "@/lib/api";
+import type { MeterData } from "@/lib/types";
 import { create } from "zustand";
 import { useMeterStore } from "./meterStore";
 

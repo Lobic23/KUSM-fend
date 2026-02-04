@@ -1,6 +1,6 @@
 import { LineChart } from "@mui/x-charts/LineChart";
 import { useMemo } from "react";
-import type { TimePoint } from "@utils/types";
+import type { TimePoint } from "@/lib/types";
 
 export type LineGraphPoint = {
   label: string;

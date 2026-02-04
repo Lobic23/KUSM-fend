@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import type { Meter, MeterData } from "@/utils/types";
+import type { Meter, MeterData } from "@/lib/types";
 
 export type PowerInMeterProps = {
   meters: Meter[],

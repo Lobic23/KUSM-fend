@@ -1,4 +1,4 @@
-import type { Meter } from "@/utils/types";
+import type { Meter } from "@/lib/types";
 import { MapPin, AlertTriangle } from "lucide-react";
 
 
