@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useEffect } from "react";
 
-import Login from "@pages/Login";
 import Dashboard from "@pages/Dashboard";
 import MasterLayout from "@components/layouts/MasterLayout";
 import Analysis from "@pages/Analysis";
@@ -18,10 +17,10 @@ import { useLatestDataStore } from "@stores/latestDataStore";
  */
 
 const router = createBrowserRouter([
-  {
-    path: "/login",
-    element: <Login />,
-  },
+  // {
+  //   path: "/login",
+  //   element: <Login />,
+  // },
   {
     element: <MasterLayout />,
     children: [

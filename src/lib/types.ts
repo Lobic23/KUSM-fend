@@ -306,6 +306,7 @@ export interface ModelStats {
   trained_at: string;
 }
 
+
 export interface WeekPrediction {
   [day: string]: PredictionPoint[];
 }

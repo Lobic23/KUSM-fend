@@ -1,5 +1,5 @@
 import { axiosInstance } from "./api_provider";
-import type { AvgConsumptionYearlyData, AvgDailyEnergyData, CurrentAnalysisResponse, DayPredictionResponse, GetAllMeterResponse, MeterData, PreviousCurrentPowerData, SinglePredictionRequest, SinglePredictionResponse, VoltageAnalysisResponse, WeekPrediction } from "./types";
+import type { AvgConsumptionYearlyData, AvgDailyEnergyData, CurrentAnalysisResponse, DayPredictionResponse, GetAllMeterResponse, MeterData, ModelStats, PreviousCurrentPowerData, SinglePredictionRequest, SinglePredictionResponse, VoltageAnalysisResponse, WeekPrediction } from "./types";
 
 // API methods
 export const api = {
@@ -62,7 +62,7 @@ export const api = {
       return response.data
     },
 
-    async getPreviousCurrentPower(): Promise<PreviousCurrentPowerData[]>  {
+    async getPreviousCurrentPower(): Promise<PreviousCurrentPowerData[]> {
       const response = await axiosInstance.get("/analysis/prev_curr_power");
       return response.data;
     }
@@ -94,6 +94,11 @@ export const api = {
 
 
   prediction: {
+
+    async getModelStats(): Promise<ModelStats> {
+      const response = await axiosInstance.get("api/prediction/stats");
+      return response.data;
+    },
     async getSinglePrediction(params: SinglePredictionRequest): Promise<SinglePredictionResponse> {
       const response = await axiosInstance.post("api/prediction/single", params);
       return response.data;

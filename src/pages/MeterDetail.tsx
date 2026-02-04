@@ -26,14 +26,6 @@ export default function MeterDetail() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<string>(getToday());
 
-  const colors = ["#3b82f6", "#10b981", "#f59e0b"];
-  const data120 = Array.from({ length: 288 }, (_, i) => {
-    return (
-      50 +
-      20 * Math.sin(i / 10) +   // main curve
-      10 * Math.sin(i / 25)    // gentle variation
-    );
-  });
 
   // Creates line graph plotable data
   const createPhaseData = (keyPrefix: string) => {
@@ -173,28 +165,28 @@ export default function MeterDetail() {
         <div className="grid grid-cols-4 auto-cols-fr gap-3">
           <OverviewInfoCard
             title="Power"
-            data={powerData?.average}
+            data={powerData?.average ? Number(powerData.average) : undefined}
             unit="W"
             icon={<Zap size={18} />}
           />
 
           <OverviewInfoCard
             title="Grid Consumption"
-            data={gridData?.average}
+            data={gridData?.average ? Number(gridData.average) : undefined}
             unit="Wh"
             icon={<Plug size={18} />}
           />
 
           <OverviewInfoCard
             title="Current"
-            data={currentData?.average}
+            data={currentData?.average ? Number(currentData.average) : undefined}
             unit="A"
             icon={<Activity size={18} />}
           />
 
           <OverviewInfoCard
             title="Voltage"
-            data={voltageData?.average}
+            data={voltageData?.average ? Number(voltageData.average) : undefined}
             unit="V"
             icon={<Gauge size={18} />}
           />
