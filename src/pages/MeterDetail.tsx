@@ -7,6 +7,20 @@ import {
   Plug
 } from "lucide-react";
 
+type PhaseMetric =
+  | "current"
+  | "voltage"
+  | "active_power"
+  | "power_factor"
+  | "grid_consumption"
+  | "exported_power";
+
+type PhaseKey =
+  | `phase_A_${PhaseMetric}`
+  | `phase_B_${PhaseMetric}`
+  | `phase_C_${PhaseMetric}`;
+
+
 import { useMeterStore } from "@stores/meterStore";
 import type { MeterData, TimePoint } from "@/lib/types";
 import { api } from "@/lib/api";
@@ -37,9 +51,10 @@ export default function MeterDetail() {
 
     meterReadings.forEach(d => {
       const time = new Date(d.timestamp.replace(" ", "T"));
-      const valA = d[`phase_A_${keyPrefix}`];
-      const valB = d[`phase_B_${keyPrefix}`];
-      const valC = d[`phase_C_${keyPrefix}`];
+   
+    const valA = d[`phase_A_${keyPrefix}` as PhaseKey];
+    const valB = d[`phase_B_${keyPrefix}` as PhaseKey];
+    const valC = d[`phase_C_${keyPrefix}` as PhaseKey];
 
       a.push({ x: time, y: valA });
       b.push({ x: time, y: valB });
@@ -124,7 +139,7 @@ export default function MeterDetail() {
   const gridData = useMemo(() => createPhaseData('grid_consumption'), [meterReadings]);
 
   const phasePowerContribution = useMemo(() => {
-    if (!meterReadings.length) return undefined;
+    if (!meterReadings.length) return null;
 
     let sumA = 0;
     let sumB = 0;

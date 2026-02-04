@@ -1,4 +1,5 @@
 import { BarChart } from "@mui/x-charts/BarChart";
+import { ChartsReferenceLine } from "@mui/x-charts/ChartsReferenceLine";
 
 export type BarGraphData = {
   label: string;
@@ -7,7 +8,7 @@ export type BarGraphData = {
 
 export type BarGraphProps = {
   title: string;
-  data?: BarGraphData[];
+  data: BarGraphData[] | null;
   colors?: string[];
 };
 
@@ -56,8 +57,8 @@ export function BarGraph({
               values: labels,
               colors,
             },
-            categoryGapRatio:0.65,
-            barGapRatio:0.1,
+            categoryGapRatio: 0.65,
+            barGapRatio: 0.1,
           },
         ]}
         yAxis={[
@@ -72,7 +73,6 @@ export function BarGraph({
         series={[
           {
             data: values,
-            colorByPoint: true,
           },
         ]}
         borderRadius={6}
@@ -92,7 +92,17 @@ export function BarGraph({
             display: "none",
           },
         }}
-      />
+      >
+
+        <ChartsReferenceLine
+          y={0}
+          lineStyle={{
+            stroke: "#E5E7EB",
+            strokeDasharray: "4 4",
+            strokeWidth: 2,
+          }}
+        />
+      </BarChart>
     </div>
   );
 }

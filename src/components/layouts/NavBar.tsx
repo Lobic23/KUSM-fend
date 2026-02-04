@@ -1,12 +1,4 @@
 
-export default function NavBar({title} : { title: String }) {
-  return (
-    <>
-      <nav className="big-white shadow-sm">
-        <div className="px-4 py-4">
-          <div className="text-xl font-semibold text-gray-900"> { title } </div>
-        </div>
-      </nav>
-    </>
-  );
+export default function NavBar() {
+  return null;
 }

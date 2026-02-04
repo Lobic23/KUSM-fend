@@ -37,7 +37,7 @@ export function LineGraph({ title, points }: LineGraphProps) {
     );
   }
 
-  const { series, xAxis, yAxis } = useMemo(() => {
+  const { series, yAxis } = useMemo(() => {
     const allValues = safePoints.flatMap((p) => p.data.map((d) => d.y));
     const minY = Math.min(...allValues);
     const maxY = Math.max(...allValues);
@@ -47,7 +47,7 @@ export function LineGraph({ title, points }: LineGraphProps) {
     const isTimeAxis = firstX instanceof Date;
 
     const xValues = safePoints[0].data.map((d) =>
-      isTimeAxis ? d.x.getTime() : d.x
+      isTimeAxis ? (d.x as Date).getTime() : d.x
     );
 
     return {
@@ -94,10 +94,8 @@ export function LineGraph({ title, points }: LineGraphProps) {
 
       <LineChart
         series={series}
-        xAxis={xAxis}
         yAxis={yAxis}
         hideLegend
-        tooltip={{ trigger: "axis" }}
         sx={{
           "& .MuiAreaElement-root": {
             fillOpacity: 0.15,

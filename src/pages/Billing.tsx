@@ -1,5 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import {
   Receipt,
   Calculator,
@@ -10,11 +9,11 @@ import {
 import { useMeterStore } from "@/stores/meterStore";
 import type { BillingResponse } from "@/lib/types";
 import { api } from "@/lib/api";
-import { COLORS, getCurrentMonth, getColorByID, formatMoney } from "@/lib/utils";
+import { COLORS, getCurrentMonth, getColorByID} from "@/lib/utils";
 import { OverviewInfoCard } from "@components/OverviewInfoCard";
 import { LineGraph, type LineGraphPoint } from "@components/LineGraph";
 import { PieGraph, type PieGraphPoint } from "@components/PieGraph";
-import { BarGraph, type BarGraphPoint } from "@components/BarGraph";
+import { BarGraph, type BarGraphData } from "@components/BarGraph";
 
 export default function Billing() {
   const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
@@ -37,7 +36,7 @@ export default function Billing() {
 
     const doBilling = async () => {
       try {
-        const res = await api.billing.doBill(year, month);
+        await api.billing.doBill(year, month);
       } catch (err) {
         console.error(err);
       }
@@ -82,10 +81,10 @@ export default function Billing() {
       data: billData?.cost_per_day.map((d) => ({
         x: d.day,
         y: d.cost,
-      })),
+      })) ?? [],
     }
 
-    if (points.data) {
+    if (points.data.length > 0) {
       setCostPerDayPoints([points]);
     } else {
       setCostPerDayPoints(null);
@@ -100,7 +99,7 @@ export default function Billing() {
           id: m.meter_id,
           label: meterIdToName[m.meter_id] ?? `Meter ${m.meter_id}`,
           value: m.cost,
-          color: getColorByID(m.meter_id), // 👈 key line
+          color: getColorByID(m.meter_id),
         }))
       : null;
 
@@ -121,7 +120,7 @@ export default function Billing() {
     let data = billData
       ? weekdayOrder.map(day => ({
           label: day.slice(0, 3),
-          value: billData.avg_cost_per_weekday[day] ?? 0,
+          value: billData.avg_cost_per_weekday[day as keyof typeof billData.avg_cost_per_weekday] ?? 0,
         }))
       : null;
     setWeekDayData(data);
@@ -201,19 +200,19 @@ export default function Billing() {
         <div className="flex justify-center gap-20">
           <OverviewInfoCard
             title="Total Cost"
-            data={formatMoney(billData?.billing.total_cost)}
+            data={billData?.billing.total_cost}
             icon={<Receipt size={18} />}
           />
 
           <OverviewInfoCard
             title="Average Cost / Day"
-            data={formatMoney(billData?.billing.avg_cost_per_day)}
+            data={billData?.billing.avg_cost_per_day}
             icon={<Calculator size={18} />}
           />
 
           <OverviewInfoCard
             title="Most Expensive Day"
-            data={formatMoney(billData?.billing.expensive_day_cost)}
+            data={billData?.billing.expensive_day_cost}
             footer={`${year}-${String(month).padStart(2, "0")}-${billData?.billing.expensive_day}`}
             icon={<CalendarDays size={18} />}
           />
