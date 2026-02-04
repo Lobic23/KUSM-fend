@@ -16,16 +16,15 @@ export default function MasterLayout () {
   const stateTitle = location.state?.title;
   const title = stateTitle ?? routeTitle;
   return (
-    <div className="flex-col overflow-hidden">
+    <div className=" flex-col overflow-scroll">
       <NavBar title={title} />
-      <div className="flex h-screen overflow-hidden">
+      <div className="h-[92vh] flex overflow-hidden">
         <SideBar />
         { /* Main Body */ }
-        <div className="flex-1 overflow-auto no-scrollbar p-2">
+        <div className="flex-1 overflow-scroll no-scrollbar p-2">
           <Outlet />
         </div>
       </div>
-
     </div>
   );
 };

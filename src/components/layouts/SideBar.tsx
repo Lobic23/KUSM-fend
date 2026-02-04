@@ -24,7 +24,7 @@ export default function SideBar() {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-  <div className="w-64 h-full text-gray-700 flex flex-col bg-gray-100 m-2 rounded-2xl">
+  <div className="w-64 h-[91vh] text-gray-700 flex flex-col bg-gray-100/70 m-2 rounded-2xl">
 
       {/* Main Navigation */}
       <div className="px-4 py-4">
