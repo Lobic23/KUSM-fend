@@ -46,7 +46,9 @@ const router = createBrowserRouter([
       },
       {
         path: "/map/admin",
-        element: <MapAdmin />,
+        element: (<ProtectedRoute requireAuth>
+          <MapAdmin />
+        </ProtectedRoute>),
         handle: { title: "Map" },
       },
       {

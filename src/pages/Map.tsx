@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
-import { Zap, AlertTriangle, Activity, Thermometer } from "lucide-react";
+import { Zap, AlertTriangle, Activity, Thermometer, Pencil } from "lucide-react";
 import { useMeterStore } from "@/stores/meterStore";
 import type { Meter } from "@/lib/types";
 import { useLatestDataStore } from "@/stores/latestDataStore";
 import { StatCard } from "@/components/Map/StatsCard";
 import { MapImageAndOverlays } from "@/components/Map/MapImageAndOverlays";
 import { MeterDetailSidebar } from "@/components/Map/MapSiderbar";
+import { useAuthStore } from "@/stores/authStore";
+import { useNavigate } from "react-router-dom";
 
 const VOLTAGE_LIMITS = {
   normal: { min: 200, max: 220 },
@@ -21,9 +23,11 @@ const getVoltageStatus = (voltage: number): "critical" | "warning" | "normal" =>
 };
 
 export default function Map() {
-  const { meters, error} = useMeterStore();
+  const { meters, error } = useMeterStore();
   const { meterDataMap, isLoading } = useLatestDataStore();
+  const { isAuthenticated } = useAuthStore();
 
+  const navigate = useNavigate();
   const [selectedMeter, setSelectedMeter] = useState<Meter | null>(null);
   const [hoveredMeter, setHoveredMeter] = useState<Meter | null>(null);
   const [activeLayers] = useState({
@@ -80,10 +84,10 @@ export default function Map() {
   const avgVoltage =
     meters.length > 0
       ? meters.reduce((sum, m) => {
-          const data = meterDataMap[m.meter_id];
-          if (!data) return sum;
-          return sum + (data.phase_A_voltage + data.phase_B_voltage + data.phase_C_voltage) / 3;
-        }, 0) / meters.length
+        const data = meterDataMap[m.meter_id];
+        if (!data) return sum;
+        return sum + (data.phase_A_voltage + data.phase_B_voltage + data.phase_C_voltage) / 3;
+      }, 0) / meters.length
       : 0;
 
   if (isLoading) {
@@ -149,8 +153,8 @@ export default function Map() {
                   getVoltageStatus(avgVoltage) === "critical"
                     ? "red"
                     : getVoltageStatus(avgVoltage) === "warning"
-                    ? "yellow"
-                    : "green"
+                      ? "yellow"
+                      : "green"
                 }
               />
             </div>
@@ -189,6 +193,19 @@ export default function Map() {
                     isOutage={isOutageFn}
                   />
                 </div>
+
+                {isAuthenticated && (
+                  <button
+                    onClick={() => {
+                      navigate("/map/admin");
+                    }}
+                    className="ml-4 flex items-center gap-2 px-3 py-2 text-sm rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                  >
+                    <Pencil className="w-4 h-4" />
+                    Edit Map
+                  </button>
+                )}
+
 
               </div>
             </div>
