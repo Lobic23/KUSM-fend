@@ -15,6 +15,7 @@ import { useMeterStore } from "@stores/meterStore";
 import MapAdmin from "@pages/MapAdmin";
 import { useLatestDataStore } from "@stores/latestDataStore";
 import ProtectedRoute from "@components/auth/ProtectedRoute";
+import Profile from "./pages/Profile";
 
 /*
  * Application Routes
@@ -60,6 +61,12 @@ const router = createBrowserRouter([
         path: "/billing",
         element: <Billing />,
         handle: { title: "Billing" },
+      },
+      {
+        path: "/profile",
+        element: (<ProtectedRoute requireAuth><Profile /></ProtectedRoute>),
+        handle: { title: "User Profile" },
+
       },
       // Admin Routes
       {

@@ -25,7 +25,7 @@ import { useMeterStore } from "@stores/meterStore";
 import type { MeterData, TimePoint } from "@/lib/types";
 import { api } from "@/lib/api";
 import { getToday } from "@/lib/utils";
-import { LineGraph} from "@components/LineGraph";
+import { LineGraph } from "@components/LineGraph";
 import { BarGraph } from "@components/BarGraph";
 import { OverviewInfoCard } from "@components/OverviewInfoCard";
 import { useLatestDataStore } from "@/stores/latestDataStore";
@@ -36,7 +36,7 @@ export default function MeterDetail() {
   const { meterDataMap } = useLatestDataStore();
   const meter = meters.find((m) => m.meter_id === Number(meterId));
 
-  const [meterReadings, setMeterReadings] = useState<MeterData[]|null>(null);
+  const [meterReadings, setMeterReadings] = useState<MeterData[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<string>(getToday());
 
@@ -53,7 +53,7 @@ export default function MeterDetail() {
 
     meterReadings.forEach(d => {
       const time = new Date(d.timestamp.replace(" ", "T"));
-   
+
       const valA = d[`phase_A_${keyPrefix}` as PhaseKey];
       const valB = d[`phase_B_${keyPrefix}` as PhaseKey];
       const valC = d[`phase_C_${keyPrefix}` as PhaseKey];
@@ -100,7 +100,7 @@ export default function MeterDetail() {
 
         setMeterReadings(res.data);
       } catch (err) {
-        console.error(err);
+        // console.error(err);
         setMeterReadings([]);
       } finally {
         setLoading(false);
@@ -117,16 +117,16 @@ export default function MeterDetail() {
     if (!isToday) return;
     const latestData = meterDataMap[meter.meter_id];
     if (!latestData) return;
-    
+
     setMeterReadings((prev) => {
       // Handle null or empty array
       if (!prev || prev.length === 0) return [latestData];
-      
+
       const last = prev[prev.length - 1];
       if (last.timestamp === latestData.timestamp) {
         return prev;
       }
-      
+
       // Add new reading and keep last 288 readings (24 hours at 5 min intervals)
       return [...prev, latestData].slice(-288);
     });
