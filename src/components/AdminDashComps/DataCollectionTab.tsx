@@ -110,16 +110,40 @@ export default function DataCollectionTab({ onMessage }: DataCollectionTabProps)
 	const handleStart = async () => {
 		try {
 			setActionLoading("start");
+
+			// Add seconds to match ISO format expected by backend
+			const formatWithSeconds = (dateTimeLocal: string) => {
+				// datetime-local gives us "2025-02-15T14:30"
+				// backend needs "2025-02-15T14:30:00"
+				return dateTimeLocal.length === 16 ? `${dateTimeLocal}:00` : dateTimeLocal;
+			};
+
 			await axiosInstance.post("/data-collection/start", {
-				start_datetime: formData.startDateTime,
-				end_datetime: formData.endDateTime,
+				start_datetime: formatWithSeconds(formData.startDateTime),
+				end_datetime: formatWithSeconds(formData.endDateTime),
 				interval_minutes: formData.interval,
 			});
+
 			onMessage("success", "Data collection started successfully");
 			setShowForm(false);
 			await fetchStatus();
 		} catch (err: any) {
-			onMessage("error", err.response?.data?.detail || "Failed to start collection");
+			// Enhanced error handling for validation errors
+			let errorMessage = "Failed to start collection";
+
+			if (err.response?.data?.detail) {
+				if (Array.isArray(err.response.data.detail)) {
+					// FastAPI validation errors
+					errorMessage = err.response.data.detail
+						.map((e: any) => `${e.loc[e.loc.length - 1]}: ${e.msg}`)
+						.join('; ');
+				} else {
+					errorMessage = err.response.data.detail;
+				}
+			}
+
+			onMessage("error", errorMessage);
+			console.error("Validation error:", err.response?.data);
 		} finally {
 			setActionLoading(null);
 		}
