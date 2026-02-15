@@ -14,30 +14,20 @@ export type LineGraphProps = {
 };
 
 export function LineGraph({ title, points }: LineGraphProps) {
-  // Loading
-  if (!points) {
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-white rounded-2xl border border-gray-100">
-        <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-500 rounded-full animate-spin" />
-        <span className="text-sm text-gray-400">Fetching {title}</span>
-      </div>
-    );
-  }
-
   const safePoints = useMemo(
-    () => points.filter((p) => p.data && p.data.length > 0),
+    () => (points || []).filter((p) => p.data && p.data.length > 0),
     [points]
   );
 
-  if (safePoints.length === 0) {
-    return (
-      <div className="w-full h-full flex items-center justify-center text-sm text-gray-400">
-        No data available
-      </div>
-    );
-  }
-
   const { series, xAxis, yAxis } = useMemo(() => {
+    if (safePoints.length === 0) {
+      return {
+        series: [],
+        xAxis: [{ scaleType: "band" as const, data: [] }],
+        yAxis: [{ min: 0, max: 1, width: 50 }]
+      };
+    }
+
     const allValues = safePoints.flatMap((p) => p.data.map((d) => d.y));
     const minY = Math.min(...allValues);
     const maxY = Math.max(...allValues);
@@ -49,10 +39,9 @@ export function LineGraph({ title, points }: LineGraphProps) {
       isTimeAxis ? (d.x as Date).getTime() : d.x
     );
 
-    // Calculate start and end of day for time axis
     let dayStart: number | undefined;
     let dayEnd: number | undefined;
-    
+
     if (isTimeAxis && xValues.length > 0) {
       const firstDate = new Date(xValues[0]);
       dayStart = new Date(
@@ -79,24 +68,24 @@ export function LineGraph({ title, points }: LineGraphProps) {
       })),
       xAxis: isTimeAxis
         ? [
-            {
-              scaleType: "time" as const,
-              data: xValues,
-              min: dayStart,
-              max: dayEnd,
-              valueFormatter: (v: number) =>
-                new Date(v).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }),
-            },
-          ]
+          {
+            scaleType: "time" as const,
+            data: xValues,
+            min: dayStart,
+            max: dayEnd,
+            valueFormatter: (v: number) =>
+              new Date(v).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+          },
+        ]
         : [
-            {
-              scaleType: "band" as const,
-              data: xValues,
-            },
-          ],
+          {
+            scaleType: "band" as const,
+            data: xValues,
+          },
+        ],
       yAxis: [
         {
           min: minY >= 0 ? 0 : minY - padding,
@@ -106,6 +95,24 @@ export function LineGraph({ title, points }: LineGraphProps) {
       ],
     };
   }, [safePoints]);
+
+
+  if (!points) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-white rounded-2xl border border-gray-100">
+        <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-500 rounded-full animate-spin" />
+        <span className="text-sm text-gray-400">Fetching {title}</span>
+      </div>
+    );
+  }
+
+  if (safePoints.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-sm text-gray-400 bg-white rounded-2xl border border-gray-100">
+        No data available
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col bg-white rounded-2xl border border-gray-100 shadow-sm">

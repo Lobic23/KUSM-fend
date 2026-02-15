@@ -65,8 +65,9 @@ export default function MeterDetail() {
       count += 3;
     });
 
-    // Returning null if no data is found (to trigger the loading animation ofc)
-    // if (!a.length && !b.length && !c.length) return null;
+    //null -> loading , 0 -> no data found    
+    if (!a.length && !b.length && !c.length) return { phaseData: [], average: "0" };
+
 
     const phaseData = [
       { label: "Phase A", data: a, color: "#6D28D9" },
